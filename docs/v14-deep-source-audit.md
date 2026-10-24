@@ -1,3 +1,5 @@
+> **Creature resolution correction (2026-10-23):** Foundry already has official PF2e compendium creatures. See [Foundry-first creature strategy](creature-resolution-strategy.md): Foundry match → AMBA PF2 Search :3333 → canonical Foundry retry → validated **custom PF2e NPC** when not found, retaining complete stat blocks and surfacing partial-conversion warnings. Do not default to Journal-only for homebrew creatures.
+
 > **V14 map/schema correction:** Read [Foundry developer/API board findings](foundry-developer-boards-v14-review.md) before coding maps. v14 stores map backgrounds on **Level** documents; old flat `Scene.background` is no longer in the Scene schema. The documented grid minimum is **20 px**, not 50 px.
 
 # Deep source audit: public Foundry v14 projects
@@ -64,7 +66,7 @@ Download complete upstream working trees (read licenses before reusing code):
 - `scripts/encounter-generator.js` performs lightweight `pack.getIndex({fields})` lookups. It deduplicates by lowercase **name + level**, which can discard different remastered/homebrew creatures with identical labels. AMBA must preserve pack/UUID identity, not dedupe by name alone.
 - `scripts/encounter-builder.js` `_onCreateScene` creates a Scene of **4000×3000** and **100 pixels/grid**, then inserts Tokens at spiral positions. This does not use AMBA map dimensions or grid size; not suitable for our map import.
 - `_onPushToScene` pushes Tokens into any selected existing Scene. For each entry, `_resolveOrCreateActor` uses `game.actors.importFromCompendium(... keepId:false)`; repeated pushes can therefore produce redundant imported Actors and tokens. It has no AMBA stable-instance flags/upsert.
-- If compendium resolution fails, it creates a minimal `npc`/`hazard` Actor by name, which risks presenting an invalid or mechanically misleading sheet. **AMBA should fail loudly on missing PF2e Actors and still deliver the AMBA prose stat block as Journal**, rather than silently fabricating a game-ready NPC.
+- If compendium resolution fails, it creates a minimal `npc`/`hazard` Actor by name, which risks presenting an invalid or mechanically misleading sheet. **AMBA should fall back to a custom PF2e NPC Actor** using structured PF2 Search or AMBA monster-block data, validate the actual PF2e DataModel, and attach the full stat block; warn prominently about unconverted mechanics rather than silently presenting a fabricated game-ready NPC.
 - Positions are spiral and do not account for multi-square creature footprints: overlap risk for Large/Huge creatures.
 - Its `main.js` token toolbar integration and v13→v14 compatibility shim are useful only as examples; our module can target v14 directly.
 
@@ -78,7 +80,7 @@ In `src/module/actor/base.ts`, Actor creation extends core Foundry behavior rath
 - Create valid NPCs from existing PF2e compendium sources; avoid inventing a `system` schema or registering a custom Actor type.
 - Let PF2e choose creature footprint and auto-scale, then apply AMBA art, numbered token name and staging coordinates.
 - Prefer `fromUuid`/source identifiers to a name-only resolver; when AMBA knows only name and level, show candidates with source pack/version and require resolution for ambiguous matches.
-- If an Actor is absent, a descriptive Journal is still acceptable, **but not a functioning PF2e combatant**.
+- If the Actor is absent, use the [Foundry-first custom creature fallback](creature-resolution-strategy.md): create a valid custom PF2e NPC from PF2 Search or AMBA's structured stats, with a Journal/notes attachment for incomplete fields. Clearly distinguish fully mechanical from partial NPCs.
 - Do not assume a generic `actorLink` policy: PCs are linked by default while NPC tokens may be synthetic; confirm semantics before generating Scene Tokens.
 
 ## 5. Template: full build and UI route
@@ -164,7 +166,7 @@ Recommended stable flag identity:
 7. Build `resolvePf2eActor` using indexed compendium UUIDs, level/source checks, and an ambiguity UI.
 8. Use `game.actors.fromCompendium` + validated world Actor creation with source/variant/alliance reuse.
 9. Create numbered Tokens via `actor.getTokenDocument()`; use each token's actual width/height in staging; AMBA flags for idempotence.
-10. Generate readable Journal stat blocks from AMBA blocks with an explicit unresolved-Actor warning.
+10. Generate native custom PF2e NPC Actors for unresolved compendium creatures when structured PF2 Search or AMBA stats suffice; attach readable Journal stat blocks and explicit partial-conversion warnings.
 11. Add optional PC token placement and scene-visible sheet snapshots.
 12. Add save/queue/reimport behavior only after metadata-based upsert and no-duplicate tests pass.
 
