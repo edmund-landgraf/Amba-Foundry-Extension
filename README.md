@@ -41,3 +41,7 @@ The [2026-10-23 developer-board review](docs/foundry-developer-boards-v14-review
 ## Creature resolution
 
 Foundry with PF2e includes a native bestiary and rules engine. The bridge resolves monsters in this order: Foundry native Actor/compendium → AMBA's PF2 Search backend (port 3333) → canonical Foundry retry → validated custom PF2e NPC from PF2/AMBA structured stats. Unlike Owlbear, Foundry's native NPC sheets and combat automation should be reused. See [the detailed resolution plan](docs/creature-resolution-strategy.md).
+
+## WGUI/AMBA PF2e export inventory
+
+[Full Foundry v14 data-input matrix and WGUI Supabase source audit](docs/foundry-pf2e-full-input-matrix-wgui-audit.md) covers PC identity and builds, ancestry/class/feats, skills, prepared/innate/focus spells, equipment/runes, companions, active conditions including persistent fire, custom creatures, Scenes/Levels, Journals, Combats, assets and Adventure packs. It also identifies which data already lives in AMBA versus which data needs authorized WG Edge Function lookup or native Foundry PF2e Item matching.
