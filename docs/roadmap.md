@@ -11,8 +11,8 @@ The user initiates AMBA → Foundry export. A Foundry add-on uses AMBA REST to p
 1. **Bridge foundation**: manifest, GM-only browser, AMBA connection + authentication strategy, test on v14/PF2e. Scaffold started; runtime verification pending.
 2. **Encounter contract**: normalize AMBA module/encounter/map/monster/PC IDs and image/grid metadata; fixtures and schema tests.
 3. **Map import**: background image, 5-ft square grid, scale validation; active-scene safety and AMBA flags.
-4. **Monster tokens**: PF2e Actor compendium resolution (name + level), cloned actors, numbered instances, size-aware textures, missing-Actor diagnostics.
-5. **Stats**: Journal HTML/image pages from AMBA and PF2e sheets when Actors resolve. Do not synthesize fake PF2e mechanics.
+4. **Monster tokens / creature resolution**: reuse existing AMBA-owned world Actor; search Foundry PF2e world Actors/compendiums first; if missing ask AMBA's server-side PF2 Search (port 3333) and retry Foundry with canonical identity; if still absent create a **validated custom PF2e NPC Actor** from PF2/AMBA stats (with partial-import warnings); create numbered size-aware Tokens.
+5. **Stats**: Native PF2e NPC sheet and supported mechanics for both found and custom Actors; populate only validated structured fields and native strike/ability Items. Preserve the complete AMBA stat block in notes/Journal, especially for partial conversions. Never invent mechanics.
 6. **PCs**: optional character Tokens + sheets/Journal snapshots.
 7. **Upsert and queue**: stable AMBA IDs, position preservation, explicit rebuild, authenticated export queue.
 8. **Adventure packaging**: distributable content module/Adventure pack as a separate milestone.
@@ -33,8 +33,12 @@ Given a sample module with a mapped Goblin ×3 encounter: choose it, import a co
 
 See [deep source audit](v14-deep-source-audit.md). Adopt the v14-native Rune Goblin approach for PF2e compendium Actor copying, source UUID identity, size-aware Token placement and save-versus-place separation. **AMBA itself must additionally tag every token instance** and preserve GM locations on reimport; the reference implementation's Combatant-token identity is insufficient for general imports.
 
-Build a **read-only import plan** (create/update/reuse/unresolved) and tested encounter DTO before world writes. For first map smoke test, prefer creating a new Scene to avoid resizing a GM's populated Scene; retain adding to the active Scene as a separate parity workflow. Do not create dummy mechanical NPCs for unresolved monsters; import stat-block Journals and show explicit diagnostics. Move module API to `game.modules.get(MODULE_ID).api`; design authenticated AMBA access before production.
+Build a **read-only import plan** (create/update/reuse/unresolved) and tested encounter DTO before world writes. For first map smoke test, prefer creating a new Scene to avoid resizing a GM's populated Scene; retain adding to the active Scene as a separate parity workflow. Do not create mechanically misleading dummy Actors; **do** create real custom PF2e NPC Actors from trustworthy PF2 Search or AMBA stat data, and surface partial-conversion diagnostics. Move module API to `game.modules.get(MODULE_ID).api`; design authenticated AMBA access before production.
 
 ## V14 developer-board discoveries (2026-10-23)
 
 See [Foundry developer/API boards report](foundry-developer-boards-v14-review.md). **Critical change to milestone 3:** write the AMBA map to a Scene **Level.background.src** and set `initialLevel` appropriately; do not use legacy flat `Scene.background`. A single-level Scene is the v1 target, with map scale from `grid: {type: square, size, distance: 5, units: 'ft'}`. The official v14 minimum grid size is **20 px**, though the preferred output raster may be larger. Test on v14.369/PF2e after scene creation and reload. Never automatically resize a populated Scene.
+
+## Creature resolution decision (2026-10-23)
+
+Read [Foundry-first creature resolution strategy](creature-resolution-strategy.md). Foundry's installed PF2e game system already ships official creature compendiums and native combat rules. In contrast Owlbear needs AMBA-generated token/stat presentation; WG maintains its own creature catalog. **Foundry lookup → AMBA/PF2 Search on port 3333 → retry Foundry using canonical identity → custom PF2e NPC from structured PF2/AMBA stat blocks**. No mandatory WG dependency for Foundry. A custom NPC must be valid for the actual PF2e system version and must retain provenance and full AMBA stat-block text. Partial mechanics are marked, not invented.
