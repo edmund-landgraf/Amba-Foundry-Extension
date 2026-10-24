@@ -27,3 +27,9 @@ See `docs/roadmap.md`. Original AMBA plan: https://github.com/edmund-landgraf/Ad
 ## Tests
 
 Requires Node.js 20+: `npm test`. These test the standalone client helpers only, not Foundry APIs.
+
+## Public Foundry v14 code audit
+
+- [Deep code audit and revised import strategy](docs/v14-deep-source-audit.md)
+- [Public repository shortlist](docs/public-v14-repo-research.md)
+- [Pull full upstream source snapshots (Windows)](scripts/pull-research-sources.ps1) into ignored `research-sources/` — no third-party code is included in the AMBA repository.
