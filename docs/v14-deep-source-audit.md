@@ -1,3 +1,5 @@
+> **V14 map/schema correction:** Read [Foundry developer/API board findings](foundry-developer-boards-v14-review.md) before coding maps. v14 stores map backgrounds on **Level** documents; old flat `Scene.background` is no longer in the Scene schema. The documented grid minimum is **20 px**, not 50 px.
+
 # Deep source audit: public Foundry v14 projects
 
 Date: 2026-10-23 · Status: **code-reviewed reference implementations; not runtime-tested in our Foundry world**
@@ -140,7 +142,7 @@ Recommended stable flag identity:
 
 **Idempotence:** on reimport, existing Token position wins over AMBA staging positions. Reuse Actor when source identity/variant/side matches; update AMBA-owned text/media only when opted into refresh. Never auto-delete removed monster copies; mark them stale for explicit review.
 
-**Map:** Create or update Scene background with a durable **Foundry-accessible** image path. Normalize pixel width/height and squares; configure square `grid.size`, `grid.distance:5`, `grid.units:"ft"`. Official docs state Foundry has a **50px minimum grid size**; rerasterize AMBA source when too small, validate aspect ratio and warn before changing geometry of a Scene containing placed tokens. Do not use Rusty's hardcoded 4000×3000 mapless scene.
+**Map — corrected after public v14 developer/API board research (2026-10-23):** v14 Scene schema has a `levels` embedded collection and `initialLevel`; the background image lives in a **Level** (`levels[].background.src`), not in legacy top-level `Scene.background`. Create a new single-Level Scene with a durable Foundry-accessible image path, normalized width/height and squares, and `grid.size`, `grid.distance:5`, `grid.units:"ft"`. The official v14 `CONST.GRID_MIN_SIZE` is **20px**, not 50px ([source](https://foundryvtt.com/api/v14/variables/CONST.GRID_MIN_SIZE.html)). Rerasterize or reject below-minimum maps; warn before modifying a populated Scene's geometry. Test the actual level/background serialization and rendering on v14.369. See [developer board findings](foundry-developer-boards-v14-review.md).
 
 **Authentication:** our scaffold uses browser `fetch(credentials:"include")`; cross-origin AMBA sessions may fail because of SameSite/CORS/mixed-content rules. Design an authenticated, scoped connection/pairing flow before shipping remote push/queue. No unrestricted public API and no token embedded in the public module.
 
