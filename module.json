@@ -1,0 +1,11 @@
+{
+  "id": "amba-foundry-extension",
+  "title": "AMBA Foundry Bridge",
+  "description": "Import AMBA encounters into a Foundry VTT world (early development build).",
+  "version": "0.1.0",
+  "type": "module",
+  "authors": [{"name": "AMBA"}],
+  "compatibility": {"minimum": "14"},
+  "relationships": {"systems": [{"id": "pf2e", "type": "system"}]},
+  "esmodules": ["scripts/main.js"]
+}
