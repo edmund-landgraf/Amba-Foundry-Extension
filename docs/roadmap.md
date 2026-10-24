@@ -42,3 +42,9 @@ See [Foundry developer/API boards report](foundry-developer-boards-v14-review.md
 ## Creature resolution decision (2026-10-23)
 
 Read [Foundry-first creature resolution strategy](creature-resolution-strategy.md). Foundry's installed PF2e game system already ships official creature compendiums and native combat rules. In contrast Owlbear needs AMBA-generated token/stat presentation; WG maintains its own creature catalog. **Foundry lookup → AMBA/PF2 Search on port 3333 → retry Foundry using canonical identity → custom PF2e NPC from structured PF2/AMBA stat blocks**. No mandatory WG dependency for Foundry. A custom NPC must be valid for the actual PF2e system version and must retain provenance and full AMBA stat-block text. Partial mechanics are marked, not invented.
+
+## Combat runtime architecture: one authoritative tracker per encounter (2026-10-23)
+
+See [combat runtime and sync architecture](combat-runtime-sync-architecture.md). Foundry/PF2e can own the **live combat state** (initiative, rounds, HP, conditions, roll/damage execution) and let players see it natively, eliminating the need for a second WG combat tracker in Foundry games. This is separate from AMBA's immutable/adventure *authoring* data. Existing WG + Owlbear games can continue using WG as authority.
+
+**Build after Actor/Token import**: create and bind Foundry `Combat`/`Combatant` documents; verify independent per-token NPC HP, native PF2e attack/conditions/damage and player permissions. Then add *optional* read-only combat snapshots for outside views. Do not promise live WG writing in v1: WG encounter upserts replace combatant objects, and WG PC HP/conditions use a distinct versioned Character update path. Bidirectional sync is later, opt-in, and requires identity, conflict, and retry handling. Foundry catalog resolution and PF2 Search catalog matching are an identity/lookup concern, **not** a requirement to duplicate their databases.
