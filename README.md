@@ -37,3 +37,7 @@ Requires Node.js 20+: `npm test`. These test the standalone client helpers only,
 ## Foundry public developer board findings
 
 The [2026-10-23 developer-board review](docs/foundry-developer-boards-v14-review.md) tracks v14 API issues, current stable release 14.369, Scene Level map changes, grid constraints, Scene resize fixes and package compatibility. **Map writers must target `Level.background`, not legacy `Scene.background`**.
+
+## Creature resolution
+
+Foundry with PF2e includes a native bestiary and rules engine. The bridge resolves monsters in this order: Foundry native Actor/compendium → AMBA's PF2 Search backend (port 3333) → canonical Foundry retry → validated custom PF2e NPC from PF2/AMBA structured stats. Unlike Owlbear, Foundry's native NPC sheets and combat automation should be reused. See [the detailed resolution plan](docs/creature-resolution-strategy.md).
