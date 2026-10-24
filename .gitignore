@@ -1,0 +1,7 @@
+# Upstream research snapshots are independent projects. Do not vendor source dumps.
+research-sources/
+
+# Local build products
+node_modules/
+dist/
+coverage/
