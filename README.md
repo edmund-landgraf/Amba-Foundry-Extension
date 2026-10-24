@@ -33,3 +33,7 @@ Requires Node.js 20+: `npm test`. These test the standalone client helpers only,
 - [Deep code audit and revised import strategy](docs/v14-deep-source-audit.md)
 - [Public repository shortlist](docs/public-v14-repo-research.md)
 - [Pull full upstream source snapshots (Windows)](scripts/pull-research-sources.ps1) into ignored `research-sources/` — no third-party code is included in the AMBA repository.
+
+## Foundry public developer board findings
+
+The [2026-10-23 developer-board review](docs/foundry-developer-boards-v14-review.md) tracks v14 API issues, current stable release 14.369, Scene Level map changes, grid constraints, Scene resize fixes and package compatibility. **Map writers must target `Level.background`, not legacy `Scene.background`**.
