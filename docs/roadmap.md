@@ -28,3 +28,9 @@ Given a sample module with a mapped Goblin ×3 encounter: choose it, import a co
 - No proxy that bypasses AMBA authorization; scope requests to the user.
 - Reject ambiguous actors, missing map files and inconsistent grids with visible warnings.
 - Foundry core v14 and PF2e version require live compatibility tests before declaring support.
+
+## Research-driven implementation notes (2026-10-23)
+
+See [deep source audit](v14-deep-source-audit.md). Adopt the v14-native Rune Goblin approach for PF2e compendium Actor copying, source UUID identity, size-aware Token placement and save-versus-place separation. **AMBA itself must additionally tag every token instance** and preserve GM locations on reimport; the reference implementation's Combatant-token identity is insufficient for general imports.
+
+Build a **read-only import plan** (create/update/reuse/unresolved) and tested encounter DTO before world writes. For first map smoke test, prefer creating a new Scene to avoid resizing a GM's populated Scene; retain adding to the active Scene as a separate parity workflow. Do not create dummy mechanical NPCs for unresolved monsters; import stat-block Journals and show explicit diagnostics. Move module API to `game.modules.get(MODULE_ID).api`; design authenticated AMBA access before production.
