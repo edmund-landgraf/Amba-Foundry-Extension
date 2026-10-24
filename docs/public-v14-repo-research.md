@@ -1,3 +1,5 @@
+> **October 23, 2026:** Deeper source inspection discovered [Rune Goblin's v14-native PF2e encounter builder](https://github.com/rune-goblin/pf2e-encounter-builder), which supersedes the earlier RustyJimjams builder as our primary Actor/Token implementation reference. Read [the detailed code audit](v14-deep-source-audit.md) for exact files, algorithms, pitfalls, and strategy.
+
 # Public Foundry VTT v14 GitHub research
 
 Reviewed: 2026-10-23. Scope: targeted public-repository survey, **not** an exhaustive inventory of every GitHub repository that supports v14. Sources are linked below; all third-party code remains in its original repositories (no source code copied).
